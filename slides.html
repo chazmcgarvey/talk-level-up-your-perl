@@ -1412,57 +1412,66 @@ sub launch_missile ( $silo_id = get_default_silo_id() ) {
 ---
 class: ex-newfeatures
 
-## Try some newer perl5 features.
-
-```perl
-*use v5.24;
-*use feature qw(signatures);    # available in v5.20
-*no warnings qw(experimental::signatures);
-
-my $missile_inventory = {
-    ID  => 20,
-    WY  => 25,
-    CA  => 195,
-};
-
-*sub get_default_silo_id () {
-    return $_ if 0 < $missile_inventory->{$_} for (sort keys $missile_inventory->%*);
-    die "No more missiles. :-(\n";
-}
-
-*sub launch_missile ( $silo_id = get_default_silo_id() ) {
-    die "Silo is empty.\n" if $missile_inventory->{$silo_id} <= 0;
-    $missile_inventory->{$silo_id} -= 1;
-    say "Missile launched from silo $silo_id.";
-}
-```
-
----
-class: ex-newfeatures
-
-## Try some newer perl5 features.
+### Postfix dereferencing
 
 ```perl
 use v5.24;
-use feature qw(signatures);    # available in v5.20
+
+my $person = {
+    name => 'Bob',
+    associates => [
+        {
+            name => 'Karen',
+        },
+        {
+            name => 'Doug',
+        },
+    ],
+}
+
+my @others = $person->{associates}->@*;
+my %associate_attributes = $person->{associates}->@[0]->%*;
+```
+
+### `@{...}` can be `->@*` at the end
+### `%{...}` can be `->%*` at the end
+
+---
+class: ex-newfeatures2
+
+### Subroutine signatures
+
+```perl
+use v5.20;
+use feature qw(signatures);
 no warnings qw(experimental::signatures);
 
-my $missile_inventory = {
-    ID  => 20,
-    WY  => 25,
-    CA  => 195,
+sub only_one_arg($foo) {
+}
+
+sub other_args_allowed_and_ignored($foo, @) {
+}
+
+sub positional_and_named($args, %other) {
+}
+
+# etc.
+```
+
+---
+class: ex-newfeatures2
+
+### Strip leading space in heredocs
+
+```perl
+use v5.26;
+
+do {
+    print <<~'HERE';
+    Hi. The text here is indented in the source code,
+    but not in the console!
+    HERE;
 };
-
-sub get_default_silo_id () {
-*   return $_ if 0 < $missile_inventory->{$_} for (sort keys $missile_inventory->%*);
-    die "No more missiles. :-(\n";
-}
-
-sub launch_missile ( $silo_id = get_default_silo_id() ) {
-    die "Silo is empty.\n" if $missile_inventory->{$silo_id} <= 0;
-    $missile_inventory->{$silo_id} -= 1;
-    say "Missile launched from silo $silo_id.";
-}
 ```
 
 ---
