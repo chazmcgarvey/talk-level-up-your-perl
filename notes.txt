@@ -10,10 +10,10 @@ Ground rules:
 
 I Use CPAN.
 X Use B::Deparse. https://metacpan.org/pod/B::Deparse
-X Document your shell scripts with pod.
 X Know regular expressions.
 X Use Regexp::Debugger. https://metacpan.org/pod/Regexp::Debugger
 X Write vim plugins in Perl.
+X Document your shell scripts with pod.
 X Understand calling context.
 X Understand execution phases.
 X Understand when to be terse and when to be verbose

@@ -61,98 +61,6 @@ Deparse supports other flags that may be useful. Read the pod to find out more.
 Aside: Be careful about mixing high and low-precedence logical operators.
 
 ---
-class: ex-shellpod
-
-## Document your shell scripts with pod.
-
-```bash
-#!/bin/sh
-
-: <<'=cut'
-=head1 NAME
-
-therapist.sh - This script can save you a bunch of cash
-
-=cut
-
-echo 'Hello. Now, tell me about your problems.'
-
-while read response
-do
-    printf "Patient said: %s" "$response" >>therapist_notes.txt
-
-    echo 'And how did that make you feel?'
-done
-
-echo "Goodbye! Let's meet again in two weeks."
-```
-
----
-class: ex-shellpod
-
-## Document your shell scripts with pod.
-
-```bash
-#!/bin/sh
-
-: <<'=cut'
-*=head1 NAME
-*
-*therapist.sh - This script can save you a bunch of cash
-*
-*=cut
-
-echo 'Hello. Now, tell me about your problems.'
-
-while read response
-do
-    printf "Patient said: %s" "$response" >>therapist_notes.txt
-
-    echo 'And how did that make you feel?'
-done
-
-echo "Goodbye! Let's meet again in two weeks."
-```
-
-???
-It's pod! In a shell script.
-
----
-class: ex-shellpod
-
-## Document your shell scripts with pod.
-
-```bash
-#!/bin/sh
-
-*: <<'=cut'
-=head1 NAME
-
-therapist.sh - This script can save you a bunch of cash
-
-=cut
-
-echo 'Hello. Now, tell me about your problems.'
-
-while read response
-do
-    printf "Patient said: %s" "$response" >>therapist_notes.txt
-
-    echo 'And how did that make you feel?'
-done
-
-echo "Goodbye! Let's meet again in two weeks."
-```
-
-???
-This is the key right here. Anybody know what this is?
-
-It's a heredoc.
-
-The colon command in bourne shell is just noop. Sometimes you'll see the colon used as a type of comment, but unlike
-a comment the shell does parse the arguments to colon.
-
----
 class: center, middle
 
 ## Know regular expressions.
@@ -461,6 +369,97 @@ endfunction
 
 ???
 By the way, Vim supports embedded interpreters for other languages like Python, Ruby, and Lua in similar fashion.
+
+---
+class: center, middle
+
+## Document your shell scripts with pod.
+
+---
+class: ex-shellpod
+
+```bash
+#!/bin/sh
+
+: <<'=cut'
+=head1 NAME
+
+therapist.sh - This script can save you a bunch of cash
+
+=cut
+
+echo 'Hello. Now, tell me about your problems.'
+
+while read response
+do
+    printf "Patient said: %s" "$response" >>therapist_notes.txt
+
+    echo 'And how did that make you feel?'
+done
+
+echo "Goodbye! Let's meet again in two weeks."
+```
+
+---
+class: ex-shellpod
+
+```bash
+#!/bin/sh
+
+: <<'=cut'
+*=head1 NAME
+*
+*therapist.sh - This script can save you a bunch of cash
+*
+*=cut
+
+echo 'Hello. Now, tell me about your problems.'
+
+while read response
+do
+    printf "Patient said: %s" "$response" >>therapist_notes.txt
+
+    echo 'And how did that make you feel?'
+done
+
+echo "Goodbye! Let's meet again in two weeks."
+```
+
+???
+It's pod! In a shell script.
+
+---
+class: ex-shellpod
+
+```bash
+#!/bin/sh
+
+*: <<'=cut'
+=head1 NAME
+
+therapist.sh - This script can save you a bunch of cash
+
+=cut
+
+echo 'Hello. Now, tell me about your problems.'
+
+while read response
+do
+    printf "Patient said: %s" "$response" >>therapist_notes.txt
+
+    echo 'And how did that make you feel?'
+done
+
+echo "Goodbye! Let's meet again in two weeks."
+```
+
+???
+This is the key right here. Anybody know what this is?
+
+It's a heredoc.
+
+The colon command in bourne shell is just noop. Sometimes you'll see the colon used as a type of comment, but unlike
+a comment the shell does parse the arguments to colon.
 
 ---
 class: center, middle
@@ -1668,10 +1667,10 @@ As this example shows, you can also do nifty stuff like destructure.
 
 .col[
 - Use [`B::Deparse`](https://metacpan.org/pod/B::Deparse).
-- Document your shell scripts with pod.
 - Know regular expressions.
 - Use [`Regexp::Debugger`](https://metacpan.org/pod/Regexp::Debugger).
 - Write Vim plugins in Perl.
+- Document your shell scripts with pod.
 - Understand calling context.
 - Understand execution phases.
 - Know when to be terse and when not to.
