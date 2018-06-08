@@ -8,6 +8,20 @@ name:   title
 
 Charles McGarvey
 
+???
+- Hi. I'm Charles McGarvey.
+- Been a Perl programmer for a long time...
+
+---
+class: center, middle
+
+![The Raptor](img/raptor.png)
+
+???
+- Deciding what to talk on... everything!
+- List of things that you should know or be aware of...
+- This image works well (merit badge)...
+
 ---
 class:  center, middle
 name:   endurance
@@ -16,10 +30,9 @@ name:   endurance
 
 ### https://jobs.endurance.com/bluehost
 
----
-class: center, middle
-
-![The Raptor](img/raptor.png)
+???
+- My employer is hiring.
+- It's a pretty cool employer...
 
 ---
 class: center, middle
@@ -27,8 +40,8 @@ class: center, middle
 ## Use [`B::Deparse`](https://metacpan.org/pod/B::Deparse).
 
 ???
-`B::Deparse` is a backend module for the compiler. It takes the parse tree after compiling and generates Perl code from
-it.
+- `B::Deparse` is a backend module for the compiler.
+- It takes the parse tree after compiling and generates Perl code from it.
 
 So, why compile Perl only to turn it back into Perl?
 It is useful for checking that perl and you are both understanding the code the same way.
@@ -36,7 +49,7 @@ It is useful for checking that perl and you are both understanding the code the 
 ---
 class: ex-deparse
 
-## Example: Use the `-p` flag to understand precedence
+## Example of `B::Deparse`.
 
 ```bash
 perl -MO=Deparse,-p -e'$a && not $b && not $c'
@@ -44,6 +57,7 @@ perl -MO=Deparse,-p -e'$a && not $b && not $c'
 -e syntax OK
 ```
 
+--
 ```bash
 perl -MO=Deparse,-p -e'$a && ! $b && ! $c'
 *(($a and not($b)) and not($c));
@@ -51,14 +65,14 @@ perl -MO=Deparse,-p -e'$a && ! $b && ! $c'
 ```
 
 ???
-These example snippets demonstrate an actual bug found in real code.
+- These example snippets demonstrate an actual bug found in real code.
 
-The first snippet is mixing high and low-precedence logical operators. Comparing the output of Deparse, it's fairly
-clear to see that these are not doing the same thing.
+- The first snippet is mixing high and low-precedence logical operators. Comparing the output of Deparse, it's fairly
+  clear to see that these are not doing the same thing.
 
-Deparse supports other flags that may be useful. Read the pod to find out more.
+- Deparse supports other flags that may be useful. Read the pod to find out more.
 
-Aside: Be careful about mixing high and low-precedence logical operators.
+- Aside: Be careful about mixing high and low-precedence logical operators.
 
 ---
 class: center, middle
@@ -66,7 +80,8 @@ class: center, middle
 ## Know regular expressions.
 
 ???
-Like, really know them.
+- Like, really know them.
+- I meet a lot of people who don't know regexp.
 
 ---
 class: center, middle
@@ -74,8 +89,9 @@ class: center, middle
 ### It's easy.
 
 ???
-All you have to do in order to read and write regular expressions *without looking at a help resource every time* is
-know the X parts of a regular expression.
+- But they're easy!
+- All you have to do in order to read and write regular expressions *without looking at a help resource every time* is
+  know a few basic things.
 
 ---
 class: center, middle
@@ -85,7 +101,8 @@ class: center, middle
 # (what to match) (how many to match)
 
 ???
-Regular expressions let you match strings.
+- Regular expressions let you match strings.
+- Find out "does a string follow a specific pattern".
 
 ---
 ### What to match: Literals
@@ -123,14 +140,18 @@ Regular expressions let you match strings.
 ---
 class: center, middle
 
-### That's it! Just:
-
 # (what to match) (how many to match)
+
+???
+- That's it!
 
 ---
 class: center, middle
 
 ## Okay, there is more...
+
+???
+- But if you know just those concepts, you can already read a large number of regexp that you'll come across.
 
 ---
 ### Boundaries
