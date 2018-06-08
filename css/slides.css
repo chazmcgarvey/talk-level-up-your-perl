@@ -1,0 +1,107 @@
+
+#slide-endurance img {
+    width: 400px;
+}
+
+#slide-last .talkqr img {
+    display: inline-block;
+    width: 230px;
+    height: 230px;
+}
+
+.ex-deparse .bash {
+    font-size: 36px;
+}
+
+.ex-vimcheck .bash {
+    font-size: 32px;
+}
+
+.ex-vim .perl {
+    font-size: 26px;
+}
+
+.ex-shellpod .bash {
+    font-size: 22px;
+}
+
+.ex-boilerplate .perl {
+    font-size: 26px;
+}
+.ex-boilerplate2 .perl {
+    font-size: 20px;
+}
+.ex-boilerplate .ini {
+    font-size: 32px;
+}
+
+.ex-regexpdebugger .perl {
+    font-size: 32px;
+}
+.regexpdebugger-commands pre {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 20px;
+}
+
+#slide-damian img {
+    width: 400px;
+}
+
+.ex-perl6 .perl {
+    font-size: 32px;
+}
+
+.ex-context .perl {
+    font-size: 32px;
+}
+.ex-context2 .perl {
+    font-size: 28px;
+}
+
+.ex-phases .perl {
+    font-size: 32px;
+}
+
+.ex-obfuscated .perl {
+    font-size: 24px;
+}
+.ex-terse .perl {
+    font-size: 24px;
+}
+
+.ex-asyncawait .perl {
+    font-size: 32px;
+}
+
+.ex-owndebugger1 .bash {
+    font-size: 42px;
+}
+.ex-owndebugger2 .perl {
+    font-size: 32px;
+}
+.ex-owndebugger2 .bash {
+    font-size: 28px;
+}
+
+.ex-develtrace img {
+    width:720px;
+}
+.ex-develtrace .cover-img img {
+    width:480px;
+}
+.ex-develtrace .bash {
+    font-size: 32px;
+}
+
+.ex-debugger .bash {
+    font-size: 32px;
+}
+
+.ex-newfeatures .perl {
+    font-size: 22px;
+}
+.ex-moo .perl {
+    font-size: 29px;
+}
+

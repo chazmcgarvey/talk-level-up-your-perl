@@ -1,0 +1,42 @@
+
+This talk I'm going to go over things that you don't need to know if you just
+want to get by, but if you actually want to be good.
+
+Ground rules:
+- If you have a question, get my attention and ask it. Don't save it until the
+  end because the format of this talk doesn't lend itself to that.
+
+
+
+I Use CPAN.
+X Use B::Deparse. https://metacpan.org/pod/B::Deparse
+X Document your shell scripts with pod.
+X Know regular expressions.
+X Use Regexp::Debugger. https://metacpan.org/pod/Regexp::Debugger
+X Write vim plugins in Perl.
+X Understand calling context.
+X Understand execution phases.
+X Understand when to be terse and when to be verbose
+X Use Future::AsyncAwait. https://metacpan.org/pod/Future::AsyncAwait
+- Know some XS.
+- Know Unicode.
+  - https://youtu.be/TmTeXcEixEg 2016 - A Million Billion Squiggly Characters - rjbs
+  - https://stackoverflow.com/a/6163129 Best Stackoverflow answer, ever. - tchrist
+X Write your own boilerplate.
+X Write your own debugger.
+X Don't write your own debugger because there are already some awesome ones on CPAN.
+X Know the default perl debugger.
+X Write modern Perl.
+  X Use some new features (postfix dereferencing, function signatures)
+  X Moo or Moose
+  X method signatures
+X Learn Perl 6
+- Learn another language.
+  - Makes you write better Perl (maybe).
+  - Can bring some good ideas from other languages back to Perl (PSGI, async await)
+- Know software design patterns.
+
+Cool stuff:
+use aliased 'Big::Long::Package::Thing';
+my $thing = Thing->new;
+

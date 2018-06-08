@@ -1,0 +1,17 @@
+
+# Level up your Perl
+
+We're all at different places along our path toward ultimate Perl Mastery,
+which is of course the end goal of any devoted Perl hacker. Some of us are
+just beginning and find ourselves facing the perplexities of sigils. Others
+are further along the path, now trying to wrap their heads around contexts.
+And then, once you think you're feeling pretty okay with Perl... bam! Regular
+expressions.
+
+Yeah, there's a lot to learn. But the journey is fun!
+
+In this talk, I'll present a list of various tips, tricks, modules,
+techniques, whatever that have helped me level up my Perl.
+
+You'll get the most out of this talk if you know at least some Perl or at
+least are curious about some of the crazy stuff Perl hackers come up with.
