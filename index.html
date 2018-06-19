@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<!-- This file is auto-generated - DO NOT EDIT!!! -->
+<html><head><meta charset="utf-8"><title>Level up your Perl</title><link rel="stylesheet" href="css/common.css"><link rel="stylesheet" href="css/slides.css"></head><body><textarea id="source">
+
+class:  center, middle
+name:   title
+
+# Level up your Perl
+
+Charles McGarvey
+
+???
+- Hi. I'm Charles McGarvey.
+- Been a Perl programmer for a long time...
+
+---
+class: center, middle
+
+![The Raptor](img/raptor.png)
+
+???
+- Deciding what to talk on... everything!
+- List of things that you should know or be aware of...
+- This image works well (merit badge)...
+
+---
+class:  center, middle
+name:   endurance
+
+![Endurance](img/endurance.png)
+
+### https://jobs.endurance.com/bluehost
+
+???
+- My employer is hiring.
+- It's a pretty cool employer...
+
+---
+class: center, middle
+
+## Use [`B::Deparse`](https://metacpan.org/pod/B::Deparse).
+
+???
+- `B::Deparse` is a backend module for the compiler.
+- It takes the parse tree after compiling and generates Perl code from it.
+
+So, why compile Perl only to turn it back into Perl?
+It is useful for checking that perl and you are both understanding the code the same way.
+
+---
+class: ex-deparse
+
+## Example of `B::Deparse`.
+
+```bash
+perl -MO=Deparse,-p -e'$a && not $b && not $c'
+*($a and not(($b && (!$c))));
+-e syntax OK
+```
+
+--
+```bash
+perl -MO=Deparse,-p -e'$a && ! $b && ! $c'
+*(($a and not($b)) and not($c));
+-e syntax OK
+```
+
+???
+- These example snippets demonstrate an actual bug found in real code.
+
+- The first snippet is mixing high and low-precedence logical operators. Comparing the output of Deparse, it's fairly
+  clear to see that these are not doing the same thing.
+
+- Deparse supports other flags that may be useful. Read the pod to find out more.
+
+- Aside: Be careful about mixing high and low-precedence logical operators.
+
+---
+class: center, middle
+
+## Know regular expressions.
+
+???
+- Like, really know them.
+- I meet a lot of people who don't know regexp.
+
+---
+class: center, middle
+
+### It's easy.
+
+???
+- But they're easy!
+- All you have to do in order to read and write regular expressions *without looking at a help resource every time* is
+  know a few basic things.
+
+---
+class: center, middle
+
+### Two basic parts:
+
+# (what to match) (how many to match)
+
+???
+- Regular expressions let you match strings.
+- Find out "does a string follow a specific pattern".
+
+---
+### What to match: Literals
+
+- Match a specific character
+- `a`
+- `7`
+- `~`
+- `ÿ`
+- `\^`
+- `\t`
+
+---
+### What to match: Character classes
+
+- Match a character within a set
+- `[a-z-]`
+- `[^0-9]`
+- `[q]`
+- `\h`
+- `[[:digit:]]`
+- `.`
+- `\X`
+
+---
+### How many to match: Quantifiers
+
+- Match a certain number of the preceding single character or character class
+- `*` - zero or more
+- `+` - one or more
+- `?` - zero or one
+- `{2}`
+- `{2,}`
+
+---
+class: center, middle
+
+# (what to match) (how many to match)
+
+???
+- That's it!
+
+---
+class: center, middle
+
+## Okay, there is more...
+
+???
+- But if you know just those concepts, you can already read a large number of regexp that you'll come across.
+
+---
+### Boundaries
+
+- Look for the edges surrounding or between things
+- `^`
+- `$`
+- `\b`
+- `\b{sb}` - sentence boundary
+- `\b{gcb}`
+
+???
+I say "look for" instead of "match" because the boundary isn't something that shows up in the results.
+
+---
+### The pipe
+
+- Match this or that
+- `cat|dog`
+
+---
+### Groups
+
+- Separate the regexp into logical chunks
+- `(blah)`
+- `(?:whatever)` - noncapturing
+
+---
+### Backreferences
+
+- Match something again
+- `\1`
+- `\2`
+- etc.
+
+---
+### Lookaround
+
+- Require presence of something without actually matching it
+- `(?=regexp)` and `(?!regexp)` - lookahead
+- `(?<=regexp)` and `(?<!regexp)` - lookbehind
+
+???
+These are zero-length assertions. Like boundaries, these don't actually match anything; they just make sure something is
+or isn't present at the position where it exists relative to its surroundings.
+
+---
+class: center, middle
+
+## Use [`Regexp::Debugger`](https://metacpan.org/pod/Regexp::Debugger).
+
+---
+class: ex-regexpdebugger
+
+```perl
+use Regexp::Debugger;
+
+my $not_png_or_jpg = qr/(?<!\.(png|jpg))$/;
+my $filename = 'log.txt';
+
+$filename =~ $not_png_or_jpg;
+```
+
+---
+class: ex-regexpdebugger
+
+```perl
+*use Regexp::Debugger;
+
+my $not_png_or_jpg = qr/(?<!\.(png|jpg))$/;
+my $filename = 'log.txt';
+
+$filename =~ $not_png_or_jpg;
+```
+
+--
+![Regexp::Debugger in action](img/regexp_debugger.png)
+
+---
+class: regexpdebugger-commands
+
+## Things you can do with Regexp::Debugger
+
+--
+- The basics: step forward ("s") and backwards ("-").
+
+--
+- Hit "d" to get a detailed description of the regexp:
+
+```text
+    (?<!                  Match negative lookbehind
+      \.                    Match a literal '.' character
+      (                     The start of a capturing block ($1)
+        png                   Match a literal sequence ("png")
+      |                     Or...
+        jpg                   Match a literal sequence ("jpg")
+      )                     The end of $1
+    )                     The end of negative lookbehind
+    $                     Match only if at end of string (or final newline)
+```
+
+--
+- Try different modes, like "e" for event log.
+
+--
+- Hit "?" for help.
+
+--
+- Hit "q" to exit the debugger.
+
+---
+class: center, middle
+
+### Also, check out [PPR](https://metacpan.org/pod/PPR).
+
+???
+This module was brought to us by Damian Conway. Speaking of, if your interest in regular expressions continues, check
+out this module. `PPR` is a packaged regular expression with subpatterns that can match Perl code.
+
+Really cool stuff.
+
+---
+class: center, middle
+
+## Write Vim plugins in Perl.
+
+---
+class: center, middle
+
+### It's easy.
+
+---
+class: ex-vimcheck, center, middle
+
+### Does your Vim support Perl?
+
+```bash
+vim --version |grep +perl && echo 'Aww yeah!'
+```
+
+???
+Some minimal builds of Vim do not have Perl support compiled in.
+Check with this.
+
+---
+class: ex-vimcheck, center, middle
+
+### You'll need this...
+
+```bash
+:h usr_41
+```
+
+Chapter 41 in the Vim manual is all about scripting.
+
+---
+class: ex-vim
+
+```perl
+function! color#random()
+    let l:colorlist = globpath(&rtp, "colors/*.vim")
+    perl <<END
+my ($result, $colors) = VIM::Eval("l:colorlist");
+return if $result != 1;
+my @available_colors = split(/\n/, $colors);
+my %bad_colors = eval {
+    open(my $fh, '<', "$ENV{HOME}/.vim/color_blacklist.txt");
+    map { chomp; ($_ => 1) } <$fh>;
+};
+for (my $tries = 0; $tries < 100; ++$tries) {
+    my $colorpath = $available_colors[int(rand(@available_colors))];
+    my ($color) = $colorpath =~ m!([^/]+)\.vim!;
+    if (!$bad_colors{$color}) {
+        VIM::DoCommand("colorscheme $color");
+        last;
+    }
+}
+END
+endfunction
+```
+
+---
+class: ex-vim
+
+```perl
+*function! color#random()
+*   let l:colorlist = globpath(&rtp, "colors/*.vim")
+*   perl <<END
+my ($result, $colors) = VIM::Eval("l:colorlist");
+return if $result != 1;
+my @available_colors = split(/\n/, $colors);
+my %bad_colors = eval {
+    open(my $fh, '<', "$ENV{HOME}/.vim/color_blacklist.txt");
+    map { chomp; ($_ => 1) } <$fh>;
+};
+for (my $tries = 0; $tries < 100; ++$tries) {
+    my $colorpath = $available_colors[int(rand(@available_colors))];
+    my ($color) = $colorpath =~ m!([^/]+)\.vim!;
+    if (!$bad_colors{$color}) {
+        VIM::DoCommand("colorscheme $color");
+        last;
+    }
+}
+*END
+*endfunction
+```
+
+???
+This is Vimscript.
+
+---
+class: ex-vim
+
+```perl
+function! color#random()
+    let l:colorlist = globpath(&rtp, "colors/*.vim")
+    perl <<END
+*my ($result, $colors) = VIM::Eval("l:colorlist");
+return if $result != 1;
+my @available_colors = split(/\n/, $colors);
+my %bad_colors = eval {
+    open(my $fh, '<', "$ENV{HOME}/.vim/color_blacklist.txt");
+    map { chomp; ($_ => 1) } <$fh>;
+};
+for (my $tries = 0; $tries < 100; ++$tries) {
+    my $colorpath = $available_colors[int(rand(@available_colors))];
+    my ($color) = $colorpath =~ m!([^/]+)\.vim!;
+    if (!$bad_colors{$color}) {
+*       VIM::DoCommand("colorscheme $color");
+        last;
+    }
+}
+END
+endfunction
+```
+
+???
+By the way, Vim supports embedded interpreters for other languages like Python, Ruby, and Lua in similar fashion.
+
+---
+class: center, middle
+
+## Document your shell scripts with pod.
+
+---
+class: ex-shellpod
+
+```bash
+#!/bin/sh
+
+: <<'=cut'
+=head1 NAME
+
+therapist.sh - This script can save you a bunch of cash
+
+=cut
+
+echo 'Hello. Now, tell me about your problems.'
+
+while read response
+do
+    printf "Patient said: %s" "$response" >>therapist_notes.txt
+
+    echo 'And how did that make you feel?'
+done
+
+echo "Goodbye! Let's meet again in two weeks."
+```
+
+---
+class: ex-shellpod
+
+```bash
+#!/bin/sh
+
+: <<'=cut'
+*=head1 NAME
+*
+*therapist.sh - This script can save you a bunch of cash
+*
+*=cut
+
+echo 'Hello. Now, tell me about your problems.'
+
+while read response
+do
+    printf "Patient said: %s" "$response" >>therapist_notes.txt
+
+    echo 'And how did that make you feel?'
+done
+
+echo "Goodbye! Let's meet again in two weeks."
+```
+
+???
+It's pod! In a shell script.
+
+---
+class: ex-shellpod
+
+```bash
+#!/bin/sh
+
+*: <<'=cut'
+=head1 NAME
+
+therapist.sh - This script can save you a bunch of cash
+
+=cut
+
+echo 'Hello. Now, tell me about your problems.'
+
+while read response
+do
+    printf "Patient said: %s" "$response" >>therapist_notes.txt
+
+    echo 'And how did that make you feel?'
+done
+
+echo "Goodbye! Let's meet again in two weeks."
+```
+
+???
+This is the key right here. Anybody know what this is?
+
+It's a heredoc.
+
+The colon command in bourne shell is just noop. Sometimes you'll see the colon used as a type of comment, but unlike
+a comment the shell does parse the arguments to colon.
+
+---
+class: center, middle
+
+## Understand calling context.
+
+???
+- One of the baffling things about Perl5 to newcomers is that subroutines can
+ do different things based on *where* they are used. This is called context.
+
+---
+## The three main contexts:
+- Scalar
+- List
+- Void
+
+---
+## The wantarray() function
+- True if caller called in **list** context.
+- False if **scalar** context.
+- `undef` if **void** context.
+
+???
+Unfortunately this function was misnamed. It should have been "wantlist" since
+there really is no "array context."
+
+---
+class: ex-context
+
+## Example: localtime()
+
+```perl
+@time = localtime();    # -> (1, 43, 13, 7, 5, 118, 4, 157, 1)
+$time = localtime();    # -> "Thu Jun  7 13:43:01 2018"
+```
+
+---
+class: ex-context
+
+## Operators help determine context.
+
+--
+```perl
+$thing_one . $thing_two
+```
+
+???
+String concatenation is a scalar thing, so the concat operator "creates" a scalar context on either side.
+
+--
+```perl
+$income - $expenses
+```
+
+???
+Numerical and comparison operators typically operator in the same way. So that's easy.
+
+--
+### Scalar context on both sides.
+
+---
+class: ex-context
+
+## Operators help determine context.
+
+```perl
+!ready()
+```
+
+```perl
+$count++
+```
+
+### Also evaluated in scalar context.
+
+???
+- Generally the prefix and postfix operators also create scalar context.
+
+---
+class: center, middle
+
+## The assignment operator... is different.
+
+???
+What makes it different is that the assignment operator is really two different
+operators in Perl 5.
+
+---
+class: ex-context2
+
+## The scalar assignment operator
+
+```perl
+$scalar = $another_scalar;      # copy scalar on the right to the left
+```
+
+--
+```perl
+$scalar = @array;
+```
+
+---
+class: ex-context2
+
+## The scalar assignment operator
+
+```perl
+$scalar = $another_scalar;      # copy scalar on the right to the left
+```
+
+```perl
+$scalar = @array;               # $scalar => length of @array
+```
+
+---
+class: ex-context2
+
+## The scalar assignment operator
+
+```perl
+$scalar = $another_scalar;      # copy scalar on the right to the left
+```
+
+```perl
+$scalar = @array;               # $scalar => length of @array
+```
+
+```perl
+$scalar = qw(list of things);
+```
+
+---
+class: ex-context2
+
+## The scalar assignment operator
+
+```perl
+$scalar = $another_scalar;      # copy scalar on the right to the left
+```
+
+```perl
+$scalar = @array;               # $scalar => length of @array
+```
+
+```perl
+$scalar = qw(list of things);   # $scalar => "things"
+```
+
+--
+### Lists and arrays are **not** the same thing!
+
+---
+class: ex-context2
+
+## The list assignment operator
+
+```perl
+@array = @another_array;        # copy array on the right to the left
+```
+
+--
+```perl
+@array = $scalar;
+```
+
+---
+class: ex-context2
+
+## The list assignment operator
+
+```perl
+@array = @another_array;        # copy array on the right to the left
+```
+
+```perl
+@array = $scalar;               # $scalar copied; @array has one item
+```
+
+--
+```perl
+@array = qw(list of things);    # contents of list copied to @array
+```
+
+---
+class: ex-context
+
+## Subroutines determine context of their parameters.
+
+```perl
+sub i_can_haz_scalar :prototype($) {
+    say @_;
+}
+
+my @arr = qw(foo bar baz);
+*i_can_haz_scalar(@arr);
+```
+
+???
+Not only can subroutines branch and do different things based on the context
+that calls them -- based on `wantarray()` -- they also control the context of
+their parameters.
+
+---
+class: ex-context
+
+## Subroutines determine context of their parameters.
+
+```perl
+sub i_can_haz_scalar :prototype($) {
+    say @_;
+}
+
+my @arr = qw(foo bar baz);
+*i_can_haz_scalar(@arr);         # => 3
+```
+
+---
+class: ex-context
+
+## Subroutines determine context of their parameters.
+
+```perl
+sub i_can_haz_scalar :prototype($) {
+    say @_;
+}
+
+*i_can_haz_scalar(qw{2 4 6 8});
+```
+
+---
+class: ex-context
+
+## Subroutines determine context of their parameters.
+
+```perl
+sub i_can_haz_scalar :prototype($) {
+    say @_;
+}
+
+*i_can_haz_scalar(qw{2 4 6 8});  # => 8
+```
+
+???
+Remember: Arrays and lists are no the same thing!
+
+---
+class: ex-context
+
+## Be vigilant.
+
+```perl
+my %account_details = (
+    first_name  => (split / /, $user_name)[0],
+    job_title   => fetch_job_title($user_name),
+);
+```
+
+???
+The reason it is important to understand contexts is because you will get
+caught by gotchas if you don't.
+
+Spot any potential problems here?
+
+---
+class: ex-context
+
+## Be vigilant.
+
+```perl
+my %account_details = (
+    first_name  => (split / /, $user_name)[0],
+*   job_title   => fetch_job_title($user_name),
+);
+```
+
+```perl
+sub fetch_job_title {
+    return;     # -> ()
+}
+```
+
+--
+### Can use the `scalar` function to force scalar context.
+
+```perl
+    job_title   => scalar fetch_job_title($user_name),
+```
+
+---
+class: ex-context
+
+## Be vigilant.
+
+```perl
+my %account_details = (
+*   first_name  => (split / /, $user_name)[0],
+    job_title   => fetch_job_title($user_name),
+);
+```
+
+### `(split /regexp/, $str)[$index]` can evaluate to `()`!
+
+???
+This is surprising, right? Usually when you have a post-circumfix index
+operator on either a list or an array, even if you go out of bounds you'll get
+an `undef`.
+
+I should also mention that not only can things like this cause bugs that are
+annoying and hard to find, there are security implications. If you're not aware
+of how all the code within a hash declaration responds to being in list
+context, you could potentially open the door for crafted user input to
+overwrite completely unrelated keys in the hash.
+
+---
+class: center, middle
+
+## Understand execution phases.
+
+---
+## Two main phases
+
+- **Compile** phase
+- **Run** phase
+
+???
+That's easy enough. What's to know, right?
+
+Well, it turns out that it's not so straightforward because unlike many other
+languages, Perl can run code in the compile phase and compile code in the run
+phase.
+
+---
+class: ex-phases
+
+## Example script
+
+```perl
+#!/usr/bin/perl
+
+print "O hai.\n";
+```
+
+---
+class: ex-phases
+
+## Example script
+
+```perl
+#!/usr/bin/perl
+
+*print "O hai.\n";
+```
+
+???
+By the time this line executes we are already in the **run** phase.
+
+So how do you actually run code in the compile phase?
+
+---
+class: ex-phases
+
+## Run code in compile phase
+
+```perl
+#!/usr/bin/perl
+
+print "O hai.\n";
+
+*BEGIN {
+*   print "Hello.\n";
+*}
+```
+
+```
+Hello.
+O hai.
+```
+
+???
+One way to run code in the compile phase is to create a `BEGIN` block.
+
+---
+class: ex-phases
+
+## Run code in compile phase
+
+```perl
+#!/usr/bin/perl
+
+*use Data::Dumper qw(Dumper);
+
+print Dumper({
+    picard  => 'jean-luc',
+    kirk    => 'james',
+});
+```
+
+???
+`use` statements are also fulfilled in the compile phase, so it doesn't matter
+where they appear within the code.
+
+Similarly, `no` statements are also performed at compile time.
+
+--
+```perl
+BEGIN {
+    require Data::Dumper;
+    Data::Dumper->import('Dumper');
+}
+```
+
+???
+A `use` statement is *almost* the equivalent of this here.
+
+Also worth pointing out, the fact that code can be ran during the compile phase means that using the `-c` flag on an
+untrusted script is not advised.
+
+---
+class: ex-phases
+
+## Compile code in run phase
+
+--
+### String `eval`!
+
+```perl
+my $calculate_answer = eval q[
+    sub {
+        return ] . ($hgttg ? 42 : 7) . q[;
+    }
+];
+
+print "The answer is ", $calculate_answer->(), ".\n";
+```
+
+???
+String `eval` both compiles and runs strings as Perl code.
+
+It gets a bad rap because of its security implications. Yes, generating code to compile and run on the fly, when based
+on user input, must be done very carefully or not at all.
+
+This technique is used by many Perl modules to "inline" optimized versions of their subroutines. For example, `Moo` and
+`Moose` can generate constructors tailored for each class rather than always using one big constructor that can is able
+to handle all the possibilities.
+
+---
+## Code blocks associated with execution phases
+
+- `BEGIN` - Runs the block immediately after it is compiled.
+
+--
+- `CHECK` - Runs the block after the main compile phase and before the main run phase.
+
+--
+- `CHECKUNIT` - Same, but for each "unit" (file).
+
+--
+- `INIT` - Runs the block immediately before the main run phase.
+
+--
+- `END` - Runs the block at program end.
+
+Source: [Know the phases of a Perl program’s execution](https://www.effectiveperlprogramming.com/2011/03/know-the-phases-of-a-perl-programs-execution/) by brian d foy
+
+???
+By the way, it runs the blocks in a defined order, which is nice: `BEGIN` and `INIT` run in top to bottom order, while
+the others run in the opposite order.
+
+---
+class: center, middle
+
+## Know when to be terse and when not to.
+
+---
+class: ex-obfuscated, center, middle
+
+```perl
+@P=split//,".URRUU\c8R";@d=split//,"\nrekcah xinU / lreP rehtona tsuJ";sub p{
+@p{"r$p","u$p"}=(P,P);pipe"r$p","u$p";++$p;($q*=2)+=$f=!fork;map{$P=$P[$f^ord
+($p{$_})&6];$p{$_}=/ ^$P/ix?$P:close$_}keys%p}p;p;p;p;p;map{$p{$_}=~/^[P.]/&&
+close$_}%p;wait until$?;map{/^r/&&<$_>}%p;$_=$d[$q];sleep rand(2)if/\S/;print
+```
+
+Source: [Just Another Perl / Unix Hacker](http://perl.plover.com/obfuscated/) by Mark Jason Dominus
+
+???
+This is what terse code looks like. At least I think it is... If I knew what it was doing, I would probably conclude
+that it is in fact terse.
+
+But actually, it might not be. For all I know this could be a very roundabout and verbose way to accomplish the work
+it's doing. I can't tell because it's too "obfuscated."
+
+---
+class: center, middle
+
+# obfuscation ≠ terseness
+
+???
+The concepts of obfuscation and terseness are not materially equivalent.
+
+Obfuscation is always bad (except in "toy" code like "Just another hacker" snippets and obfuscation challenges).
+Terseness can be bad (if it's too obfuscated for the audience), but sometimes it can be better.
+
+---
+class: ex-terse
+
+## Be terse without obfuscating
+
+- Be idiomatic.
+
+```perl
+@coordinates = @geodata[2, 3];
+@coordinates = ($geodata[2], $geodata[3]);
+$coordinates[0] = $geodata[2]; $coordinates[1] = $geodata[3]; 
+```
+
+???
+Some language features are so common, they are idiomatic among users of the language even if the code may be somewhat
+perplexing to newcomers.
+
+Here are three more-or-less equivalent ways to do the same thing. The first way, using and array slice, is
+definitionally the tersest. Is it too terse? Is it obfuscated?
+
+In my subjective opinion, all three of these statements are equally fine. Array slicing is a language feature of Perl
+that doesn't exist in every other language, so it might perplex newcomers for a bit, but I think the intent is pretty
+clear even for those new to the syntax.
+
+So this is a great place to be terse.
+
+--
+- Terse code can actually be faster for humans to parse.
+
+???
+If only because there's less to read.
+
+--
+- Talk to your peers (or downstream "users") and establish expectations.
+
+???
+Some language features and style may just be too perplexing, so pay attention to who will probably be working with your
+code in the future.
+
+You don't always have to code for the lowest possible common denominator.
+
+Example: A lot of code could be written in the functional style versus imperatively. Keep in mind that functional code
+is easier to read and write for math-minded programmers. Perl can do either, but which one you choose should depend more
+on who else is going to be working in your code rather than your own personal preference.
+
+--
+- But **never** ever sacrifice clarity of intent for shorter code.
+
+???
+Anyway, I don't have any solid wisdom for you on this topic. Just be mindful.
+
+---
+class: center, middle
+
+## Use [`Future::AsyncAwait`](https://metacpan.org/pod/Future::AsyncAwait).
+
+???
+If you have used JavaScript recently, you may have used its "async/await" feature to clean up your non-blocking code.
+
+---
+class: center, middle
+
+### Yes, Perl can do it, too!
+
+---
+class: ex-asyncawait
+
+## Without async and await
+
+```perl
+use Future;
+
+sub do_two_things {
+    return do_first_thing()->then(sub {
+        my $first = shift;
+
+        return do_second_thing($first)->then(sub {
+            my $second = shift;
+
+            return Future->done([$first, $second]);
+        });
+    });
+}
+```
+
+---
+class: ex-asyncawait
+
+## With async and await
+
+```perl
+use Future::AsyncAwait;
+
+async sub do_two_things
+{
+    my $first = await do_first_thing();
+ 
+    my $second = await do_second_thing($first);
+ 
+    return [$first, $second];
+}
+```
+
+???
+There are caveats: Localized variable assignments don't work, nor anything that has implied local-like behavior.
+
+---
+class: center, middle
+
+## Write your own boilerplate.
+
+---
+class: ex-boilerplate
+
+### The boilerplate can get unwieldy...
+
+```perl
+package My::Package;
+
+use utf8;
+use warnings FATAL => 'all';
+use strict;
+use feature ':5.14';
+use open qw(:encoding(UTF-8) :std);
+use charnames qw(:full :short);
+
+use Encoding qw(decode encode);
+use Function::Parameters;
+use Locale::TextDomain 'AppName';
+use Scalar::Util qw(blessed refaddr reftype weaken unweaken isweak);
+use Unicode::Normalize qw(NFC NFC);
+```
+
+In every file.
+
+---
+class: center, middle
+
+### Solution: Put all that junk in a separate package.
+
+---
+class: ex-boilerplate2
+
+```perl
+package My::boilerplate;
+
+use Import::Into;
+
+sub import {
+    my $class  = shift;
+    my %args   = @_;
+
+    my $target = caller;
+
+    feature     ->import::into($target, qw{:5.14});
+    strict      ->import::into($target);
+    warnings    ->import::into($target, qw{FATAL all});
+    utf8        ->import::into($target);
+    open::      ->import::into($target, qw{:encoding(UTF-8) :std});
+    charnames   ->import::into($target, qw{:full :short});
+
+    Encode              ->import::into($target, qw{decode encode});
+    Function::Parameters->import::into($target);
+    Locale::TextDomain  ->import::into($target, $args{textdomain} || 'AppName');
+    Scalar::Util        ->import::into($target, qw{blessed refaddr reftype weaken unweaken isweak});
+    Unicode::Normalize  ->import::into($target, qw{NFD NFC});
+}
+
+1;
+```
+
+---
+class: ex-boilerplate2
+
+```perl
+package My::boilerplate;
+
+*use Import::Into;
+
+sub import {
+    my $class  = shift;
+    my %args   = @_;
+
+    my $target = caller;
+
+    feature     ->import::into($target, qw{:5.14});
+    strict      ->import::into($target);
+    warnings    ->import::into($target, qw{FATAL all});
+    utf8        ->import::into($target);
+    open::      ->import::into($target, qw{:encoding(UTF-8) :std});
+    charnames   ->import::into($target, qw{:full :short});
+
+    Encode              ->import::into($target, qw{decode encode});
+    Function::Parameters->import::into($target);
+    Locale::TextDomain  ->import::into($target, $args{textdomain} || 'AppName');
+    Scalar::Util        ->import::into($target, qw{blessed refaddr reftype weaken unweaken isweak});
+    Unicode::Normalize  ->import::into($target, qw{NFD NFC});
+}
+
+1;
+```
+
+---
+class: ex-boilerplate
+
+### Use your boilerplate.
+
+```perl
+package My::Package;
+
+use My::boilerplate;
+
+sub say_hello {
+    say __"Hello";
+}
+
+1;
+```
+
+???
+Now I can use `say` without having to use perl 5.10 in my package, and I can use gettext to translate my greeting.
+Warnings and strict are also enabled. All that stuff I need in every module is there. 
+
+---
+class: ex-boilerplate
+
+## Tip: Add this to your project's `.perlcriticrc`.
+
+```ini
+[TestingAndDebugging::RequireUseStrict]
+equivalent_modules = My::boilerplate
+```
+
+---
+class: center, middle
+
+## Write your own debugger.
+
+???
+Perl provides rather convenient mechanisms for hooking into the interpreter.
+
+The idea for this topic, by the way, is from a lightning talk by rjbs in YAPC 2014. His talks are always entertaining,
+so look them up.
+
+---
+class: ex-owndebugger1
+
+```bash
+perl -d:MyFancyDebugger program.pl
+```
+
+???
+This does at least two important things.
+
+--
+### `use Devel::MyFancyDebugger;`
+### `$^P = 1855;`
+
+???
+`$^P` is a bitfield that lets you turn on and off various features related to debugging. The value 1855 isn't important;
+just know that using this flag turns on a lot of those bits.
+
+---
+class: ex-owndebugger2
+
+```perl
+package Devel::PackageOrder;
+
+my %seen;
+
+{
+    package DB;
+    sub DB {
+        my ($package, $filename, $line) = caller;
+        return if $seen{$package}++;
+        print STDERR "Package: $package\n";
+    }
+}
+
+1;
+```
+
+```bash
+perl -d:PackageOrder program.pl
+```
+
+???
+As it happens, the second bit of `$^P` arranges for a subroutine named `DB::DB` to be called per statement. 
+
+---
+class: ex-owndebugger2
+
+```perl
+package Devel::PackageOrder;
+
+my %seen;
+
+{
+*   package DB;
+*   sub DB {
+        my ($package, $filename, $line) = caller;
+        return if $seen{$package}++;
+        print STDERR "Package: $package\n";
+    }
+}
+
+1;
+```
+
+```bash
+perl -d:PackageOrder program.pl
+```
+
+???
+So, for each statement that gets run in your program, this subroutine is called. My simple example here just does some
+simple things. It uses the `caller` function to figure out where the program is at in its execution.
+
+The first item we get off of `caller` is the package name (actually we could also just call `caller` in scalar context
+to get just the package). Then, if we've seen the package before, we don't do anything, otherwise we print the name of
+the package.
+
+So, this effectively tells us in what order packages 
+
+Is this useful? I don't know. I guess it useful at some point because I wrote it. The point is, you can write your own
+debuggers to do whatever useful thing you have need of, when you have the need.
+
+And by the way, I've shown you the entirety of the debugger. There is no other code needed. It's really cool.
+
+---
+class: center, middle
+
+## Don't write your own debugger.
+
+???
+As you can imagine, there are a lot of awesome debuggers on CPAN already.
+
+You should probably check before writing your own.
+
+---
+class: ex-develtrace
+
+## [`Devel::Trace`](https://metacpan.org/pod/Devel::Trace)
+
+```bash
+perl -d:Trace -e'print scalar localtime, "\n"'
+*>> -e:1: print scalar localtime, "\n"
+Thu Jun  7 20:43:57 2018
+```
+
+---
+class: ex-develtrace
+
+## [`Devel::Trace::Syscall`](https://metacpan.org/pod/Devel::Trace::Syscall)
+
+```bash
+perl -d:Trace::Syscall=open -e'print scalar localtime, "\n"'
+Thu Jun  7 20:45:59 2018
+*open("/etc/localtime", 0x80000, 0666) = 3 at -e line 1.
+```
+
+---
+class: ex-develtrace
+
+## [`Devel::NYTProf`](https://metacpan.org/pod/Devel::NYTProf)
+
+```bash
+perl -d:NYTProf -e'print scalar localtime, "\n"'
+Thu Jun  7 20:53:42 2018
+```
+
+![NYTProf html report](img/nytprof.png)
+
+---
+class: ex-develtrace
+
+## [`Devel::Cover`](https://metacpan.org/pod/Devel::Cover)
+
+```bash
+cover -test
+```
+
+.cover-img[
+![Cover html report](img/cover.png)
+]
+
+---
+class: center, middle
+
+## Know the default perl5 debugger.
+
+???
+Of course those other debuggers are cool, but don't forget that perl also comes with its own general-purpose debugger.
+You should know it.
+
+---
+class: ex-debugger
+
+## `perl5db.pl`
+
+```bash
+perl -d program.pl 
+Enter h or 'h h' for help, or 'man perldebug' for more help.
+  DB<1>
+```
+
+--
+#### That's about it...
+
+???
+Obviously you can use it to step through code.
+
+Anyway, I don't have much to say about it. Just use it.
+
+---
+class: center, middle
+
+## Write modern Perl.
+
+---
+class: ex-newfeatures
+
+## Try some newer perl5 features.
+
+```perl
+use v5.24;
+use feature qw(signatures);    # available in v5.20
+no warnings qw(experimental::signatures);
+
+my $missile_inventory = {
+    ID  => 20,
+    WY  => 25,
+    CA  => 195,
+};
+
+sub get_default_silo_id () {
+    return $_ if 0 < $missile_inventory->{$_} for (sort keys $missile_inventory->%*);
+    die "No more missiles. :-(\n";
+}
+
+sub launch_missile ( $silo_id = get_default_silo_id() ) {
+    die "Silo is empty.\n" if $missile_inventory->{$silo_id} <= 0;
+    $missile_inventory->{$silo_id} -= 1;
+    say "Missile launched from silo $silo_id.";
+}
+```
+
+---
+class: ex-newfeatures
+
+### Postfix dereferencing
+
+```perl
+use v5.24;
+
+my $person = {
+    name => 'Bob',
+    associates => [
+        {
+            name => 'Karen',
+        },
+        {
+            name => 'Doug',
+        },
+    ],
+}
+
+my @others = $person->{associates}->@*;
+my %associate_attributes = $person->{associates}->@[0]->%*;
+```
+
+### `@{...}` can be `->@*` at the end
+### `%{...}` can be `->%*` at the end
+
+---
+class: ex-newfeatures2
+
+### Subroutine signatures
+
+```perl
+use v5.20;
+use feature qw(signatures);
+no warnings qw(experimental::signatures);
+
+sub only_one_arg($foo) {
+}
+
+sub other_args_allowed_and_ignored($foo, @) {
+}
+
+sub positional_and_named($args, %other) {
+}
+
+# etc.
+```
+
+---
+class: ex-newfeatures2
+
+### Strip leading space in heredocs
+
+```perl
+use v5.26;
+
+do {
+    print <<~'HERE';
+    Hi. The text here is indented in the source code,
+    but not in the console!
+    HERE;
+};
+```
+
+---
+class: ex-moo
+
+## Use [`Moo`](https://metacpan.org/pod/Moo) and [`Moose`](https://metacpan.org/pod/Moose).
+
+```perl
+package ToySoldier;
+
+use Function::Parameters;
+use Moo;
+use namespace::clean;
+
+extends 'Toy';
+
+with qw(HasSpear);
+
+method fight($opponent) {
+    $self->spear->thrust_at($opponent);
+}
+
+1;
+```
+
+???
+- Gives perl5 an improved object model.
+- It partially is just syntactic sugar, right? But these modules do provide a lot of value about perl5's own object
+  model.
+  - Attributes and a constructor.
+  - Roles (a.k.a. mixins).
+  - And if you use Moose, you get the whole metaobject as well.
+    - The metaobject provides introspection and runtime altering of classes. It's powerful.
+
+I'm not going to go any further into Moo or Moose, but do learn them and use them with a caveat: I don't know how anyone
+else feels about this, but I kinda like modules on CPAN that don't depend on Moo or especially Moose, because modules
+with fewer dependencies are just easier to work with generally. So, if you are releasing on CPAN, consider not depending
+on this. Or at least use Moo and not full Moose if you don't actually need the metaobject. Of course, in your own
+non-distributed programs, go all out.
+
+---
+class: center, middle
+
+## Learn Perl 6.
+
+![Camelia](img/camelia.png)
+
+???
+- It's easy to install and fun to play with.
+
+---
+class: center, middle
+
+## Go download it and just start playing around.
+
+### https://perl6.org/downloads/
+
+(Really, do it.)
+
+---
+class: ex-perl6
+
+### Meta operators
+
+```perl
+[*] 1, 2, 3, 4, 5
+```
+
+---
+class: ex-perl6
+
+### Meta operators
+
+```perl
+[*] 1, 2, 3, 4, 5           # -> 120
+```
+
+???
+- This one is called the **reduce** meta operator.
+- Also notice that in Perl 6, you don't need to surround a list in parentheses.
+
+--
+```perl
+sub some-reducer($a, $b) { $a + $b }
+
+[[&some-reducer]] 1 .. 5    # -> 15
+[+] 1 .. 5                  # -> 15
+```
+
+???
+- Can reduce using any binary operator.
+- Oh yeah, and you can use dashes in subroutine names.
+
+---
+class: ex-perl6
+
+### Meta operators
+
+```perl
+1, 3 ... 9
+2, 4, 8 ... 256
+```
+
+???
+You've seen the dot dot operator, but check out dot dot dot!
+
+---
+class: ex-perl6
+
+### Meta operators
+
+```perl
+1, 3 ... 9                  # -> 1, 3, 5, 7, 9
+2, 4, 8 ... 256             # -> 2, 4, 8, 16, 32, 64, 128, 256
+```
+
+--
+```perl
+my @fib = 1, 1, -> $a, $b { $a + $b } ... *;
+
+@fib[6]                     # -> 13
+@fib[3 .. 5]                # -> 3, 5, 8
+@fib[^8]                    # -> 1, 1, 2, 3, 5, 8, 13, 21
+```
+
+???
+- Of course you can do even awesomer things like create infinite lists with more complicated sequence logic.
+- The list elements are evaluated lazily.
+
+---
+class: ex-perl6
+
+### Create your own operators
+
+```perl
+sub postfix:<!>(Int $n) { [*] 2 .. $n }
+
+5!                          # -> 120
+```
+
+???
+Lots of languages (even perl5) allows you to override operators, but none come close to perl6 in functionality.
+
+--
+
+Types of operators you can create in Perl 6:
+
+- Prefix (like `!` as in `!True`)
+- Postfix (like `++` in `$num++`)
+- Infix (like `+` in `1 + 2`)
+- Circumfix (like `[]` in `[1, 2]`)
+- Post-circumfix (like `[]` in `@array[5]`)
+
+---
+class: ex-perl6
+
+### Destructure your structures
+
+```perl
+sub salut(% (:name($name), :title($title))) {
+    say "Hello there, $name the $title!";
+}
+
+salut({name => 'Bob', title => 'Consultant'});
+
+my %person = {name => 'Jean Luc', title => 'Captain'};
+salut(%person);
+```
+
+???
+I guess the first thing to say is that, yes, Perl 6 has function signatures.
+
+As this example shows, you can also do nifty stuff like destructure.
+
+---
+
+### Other cool stuff in Perl 6
+
+- Sigils that make [more] sense.
+
+--
+- A real object model.
+
+--
+- Types! -- If you want.
+
+--
+- Multiple dispatch for subroutines.
+
+--
+- Control over passing semantics.
+
+???
+- Args are immutable by default, but can be set to copy or be mutable (like perl5 aliasing).
+
+--
+- Lambdas
+
+---
+
+## Summary
+
+.col[
+- Use [`B::Deparse`](https://metacpan.org/pod/B::Deparse).
+- Know regular expressions.
+- Use [`Regexp::Debugger`](https://metacpan.org/pod/Regexp::Debugger).
+- Write Vim plugins in Perl.
+- Document your shell scripts with pod.
+- Understand calling context.
+- Understand execution phases.
+- Know when to be terse and when not to.
+]
+
+.col[
+- Use [`Future::AsyncAwait`](https://metacpan.org/pod/Future::AsyncAwait).
+- Write your own boilerplate.
+- Write your own debugger.
+- Don't write your own debugger.
+- Know the default perl debugger.
+- Write modern Perl.
+- Learn Perl 6.
+]
+
+---
+
+## Other topics
+- Learn XS.
+- Learn Unicode.
+- Learn another language.
+- Learn software design patterns.
+
+---
+class: center, middle
+name:  conclusion
+
+## Conclusion:
+
+### Perl is fun.
+
+---
+class:  center, middle
+name:   last
+
+.col.sep[
+## Thank you
+
+Email me: Charles McGarvey
+<chazmcgarvey@brokenzipper.com>
+
+.talkqr.center[
+Leave me feedback, if you want:
+
+![Page on Joind.in](img/talkqr.svg)
+
+<https://joind.in/talk/66955>
+]
+]
+
+.col[
+## Credits
+
+.left[
+- Thanks rjbs for your inspiring talks.
+- Thanks brian d foy for your instructive articles.
+- Thanks Damian Conway, Paul Evans, et al. for writing and sharing cool modules.
+- Thanks Larry Wall for Perl.
+]
+]
+
+</textarea><script src="remark.min.js"></script><script>var slideshow = remark.create({countIncrementalSlides: true, highlightLanguage: '', highlightLines: true, ratio: '16:9', /*slideNumberFormat: '',*/ navigation: {scroll: false, touch: false, click: false}})</script><script src="js/common.js"></script><script src="js/slides.js"></script></body></html>
+<!-- vim: set ts=4 sts=4 sw=4 tw=120 et ft=markdown nowrap: -->
